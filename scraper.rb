@@ -49,7 +49,7 @@ end
 
 def amtrack?(row)
     row.each do |el|
-        return false if ('1'..'12').include?(el)
+        return false if ('1'..'13').include?(el)  ##track numbers in PENN
     end
 
     true
