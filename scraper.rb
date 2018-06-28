@@ -32,10 +32,15 @@ def scan_page
 
   end
 
-  puts "BOARDING LOG"
-  puts log_boarding
-  puts "OTHER LOGS"
-  puts log_other
+  unless log_boarding.empty?
+      puts "BOARDING LOG"
+      pretty_print(log_boarding)
+  end
+
+  unless log_other.empty?
+      puts "OTHER LOGS"
+      pretty_print(log_other)
+  end
 end
 
 def rows_to_a(rows)
@@ -48,11 +53,7 @@ def rows_to_a(rows)
 end
 
 def amtrack?(row)
-    row.each do |el|
-        return false if ('1'..'13').include?(el)  ##track numbers in PENN
-    end
-
-    true
+    row[-2][0] == 'A'  ##Amtrack train numbers start with 'A'
 end
 
 def parse_row(row, status)
@@ -79,39 +80,23 @@ def determine_unit(train_time)
     ##vvvvvvv##
     elsif train_hour == cur_hour % 12 + 1
         return cur_hour + 1 < 12 ? 'AM' : 'PM'
+    else
+        puts "ERROR IN DETEMINE UNIT TIME"
     end
 end
 
 def create_timestamp(row)
   time = Time.now
   unit = determine_unit(row.first)
+
   timestamp = time.year.to_s + time.month.to_s + time.day.to_s + '-' + row.first + unit
 end
-#
-# def find_time(arr)
-#     arr.split(' ').first
-# end
 
-
-# def find_track(arr)
-#     arr.select{|el| ('1'..'12').include?(el)}.first
-# end
-
-# def NEC?(arr)
-#     arr.include?('Northeast') && arr.include?('Corrdr')
-# end
-
-# def parse_day
-#     WEEKDAYS = {
-#       0: 'Sunday',
-#       1: 'Monday',
-#       2: 'Tuesday',
-#       3: 'Wednesday'
-#       4: 'Thursday',
-#       5: 'Friday',
-#       6: 'Saturday',
-#     }
-#
-# end
+def pretty_print(hash)
+    print "TIME     TRACK         LINE          TRAIN #     STATUS\n"
+    hash.each_value do |info|
+        puts info.values.join('     ')
+    end
+end
 
 scan_page
